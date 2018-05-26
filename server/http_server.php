@@ -21,7 +21,7 @@ $server->on('WorkerStart', function (swoole_server $server, $worker_id) {
     require __DIR__ . '/../thinkphp/base.php';
 });
 
-$server->on('request', function ($request, $response) {
+$server->on('request', function ($request, $response) use ($server) {
     if (isset($request->server)) {
         foreach ($request->server as $key => $value) {
             $_SERVER[strtoupper($key)] = $value;
@@ -57,6 +57,7 @@ $server->on('request', function ($request, $response) {
         $ret = $e->getMessage();
     }
     $response->end($ret);
+    $server->close();
 });
 
 $server->start();
