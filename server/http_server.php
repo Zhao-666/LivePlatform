@@ -16,8 +16,47 @@ $server->set(
     ]
 );
 
+$server->on('WorkerStart', function (swoole_server $server, $worker_id) {
+    // 加载基础文件
+    require __DIR__ . '/../thinkphp/base.php';
+});
+
 $server->on('request', function ($request, $response) {
-    $response->end('<h1>HelloWorld!!!</h1>');
+    if (isset($request->server)) {
+        foreach ($request->server as $key => $value) {
+            $_SERVER[strtoupper($key)] = $value;
+        }
+    }
+    if (isset($request->header)) {
+        foreach ($request->header as $key => $value) {
+            $_SERVER[strtoupper($key)] = $value;
+        }
+    }
+    if (!empty($_GET)) {
+        unset($_GET);
+    }
+    if (isset($request->get)) {
+        foreach ($request->get as $key => $value) {
+            $_GET[$key] = $value;
+        }
+    }
+    if (!empty($_GET)) {
+        unset($_POST);
+    }
+    if (isset($request->post)) {
+        foreach ($request->post as $key => $value) {
+            $_POST[$key] = $value;
+        }
+    }
+    ob_start();
+    try {
+        \think\Container::get('app')->run()->send();
+        $ret = ob_get_contents();
+        ob_end_clean();
+    } catch (\Exception $e) {
+        $ret = $e->getMessage();
+    }
+    $response->end($ret);
 });
 
 $server->start();
