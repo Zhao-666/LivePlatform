@@ -22,6 +22,7 @@ $server->on('WorkerStart', function (swoole_server $server, $worker_id) {
 });
 
 $server->on('request', function ($request, $response) use ($server) {
+    $_SERVER = [];
     if (isset($request->server)) {
         foreach ($request->server as $key => $value) {
             $_SERVER[strtoupper($key)] = $value;
@@ -32,17 +33,13 @@ $server->on('request', function ($request, $response) use ($server) {
             $_SERVER[strtoupper($key)] = $value;
         }
     }
-    if (!empty($_GET)) {
-        unset($_GET);
-    }
+    $_GET = [];
     if (isset($request->get)) {
         foreach ($request->get as $key => $value) {
             $_GET[$key] = $value;
         }
     }
-    if (!empty($_GET)) {
-        unset($_POST);
-    }
+    $_POST = [];
     if (isset($request->post)) {
         foreach ($request->post as $key => $value) {
             $_POST[$key] = $value;
@@ -57,7 +54,7 @@ $server->on('request', function ($request, $response) use ($server) {
         $ret = $e->getMessage();
     }
     $response->end($ret);
-    $server->close();
+//    $server->close();
 });
 
 $server->start();
