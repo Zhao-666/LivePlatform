@@ -17,12 +17,13 @@ $server->set(
 );
 
 $server->on('WorkerStart', function (swoole_server $server, $worker_id) {
+    define('APP_PATH', __DIR__ . '/../application/');
     // 加载基础文件
     require __DIR__ . '/../thinkphp/base.php';
 });
 
 $server->on('request', function ($request, $response) use ($server) {
-    $_SERVER = [];
+    echo 'success';
     if (isset($request->server)) {
         foreach ($request->server as $key => $value) {
             $_SERVER[strtoupper($key)] = $value;
