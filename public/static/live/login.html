@@ -79,11 +79,11 @@
 <form class="login">
     <h2>vlaser体育赛事图文直播平台</h2>
     <div class="login-item">
-        <input type="text" placeholder="手机号" class="phone-num" name="phoneNum"/>
+        <input type="text" placeholder="手机号" class="phone-num" name="phone_num"/>
         <button id="authCodeBtn">验证码</button>
     </div>
     <div class="login-item">
-        <input type="text" placeholder="验证码" name="authCode" />
+        <input type="text" placeholder="验证码" name="code" />
     </div>
     <button type="submit" class="submit-btn" id="submit-btn">进入平台</button>
 </form>
@@ -109,7 +109,7 @@
             event.preventDefault();
             var formData = $('form').serialize();
             // TODO: 请求后台接口跳转界面，前端跳转或者后台跳
-            $.get("http://127.0.0.1:8811?s=index/Login/index&"+formData, function (data) {
+            $.get("http://172.20.10.4:8811?s=index/Login/index&"+formData, function (data) {
                 console.log(formData);
             }, 'json');
         });
