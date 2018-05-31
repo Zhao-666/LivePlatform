@@ -23,6 +23,17 @@ class Login
             return Util::show(config('code.error'), 'phone or code is empty');
         }
         $redisCode = Predis::getInstance()->get(Redis::smsKey($phone));
-        echo $redisCode;
+        if ($redisCode == $code) {
+            $data = [
+                'user' => $phone,
+                'srcKey' => md5(Redis::userKey($phone)),
+                'time' => time(),
+                'isLogin' => true
+            ];
+            Predis::getInstance()->set(Redis::userKey($phone), $data);
+            return Util::show(config('code.success'), 'ok', $data);
+        } else {
+            return Util::show(config('code.error'));
+        }
     }
 }
