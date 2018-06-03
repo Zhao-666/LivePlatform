@@ -28,7 +28,7 @@ class Ws
             'task_worker_num' => 4,
             'enable_static_handler' => true,
             'document_root' =>
-                '/home/work/htdocs/LivePlatform/public/static',
+                '/home/work/htdocs/LivePlatform/public',
         ]);
 
         $this->ws->start();
@@ -90,6 +90,12 @@ class Ws
         if (isset($request->post)) {
             foreach ($request->post as $key => $value) {
                 $_POST[$key] = $value;
+            }
+        }
+        $_FILES = [];
+        if (isset($request->files)) {
+            foreach ($request->files as $key => $value) {
+                $_FILES[$key] = $value;
             }
         }
         $_POST['http_server'] = $this->ws;
