@@ -41,7 +41,16 @@ class Ws
      */
     public function onOpen($ws, $request)
     {
+        \app\common\lib\redis\Predis::getInstance()
+            ->sAdd(config('redis.live_game_key'), $request->fd);
         var_dump($request->fd);
+    }
+
+    public function onClose($ws, $fd)
+    {
+        \app\common\lib\redis\Predis::getInstance()
+            ->sRem(config('redis.live_game_key'), $fd);
+        echo "clientid:$fd\n";
     }
 
     /**
@@ -108,11 +117,6 @@ class Ws
             $ret = $e->getMessage();
         }
         $response->end($ret);
-    }
-
-    public function onClose($ws, $fd)
-    {
-        echo "clientid:$fd\n";
     }
 
     public function onTask($serv, $taskId, $workerId, $data)

@@ -56,4 +56,14 @@ class Predis
         }
         return $this->redis->get($key);
     }
+
+    public function sAdd($key, $value)
+    {
+        return $this->redis->sAdd($key, $value);
+    }
+
+    public function sRem($key,$value)
+    {
+        return $this->redis->sRem($key,$value);
+    }
 }
