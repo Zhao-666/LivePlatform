@@ -14,5 +14,7 @@ class Live
     public function push()
     {
         print_r($_GET);
+
+        $_POST['http_server']->push(17,'hello_world!!!');
     }
 }

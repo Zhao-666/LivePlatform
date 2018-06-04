@@ -1,4 +1,4 @@
-var wsUrl = "ws://127.0.0.1:8811";
+var wsUrl = "ws://172.20.10.4:8811";
 var websocket = new WebSocket(wsUrl);
 
 //实例对象的 onopen 属性
@@ -8,7 +8,7 @@ websocket.onopen = function (evt) {
 
 //实例化 onmessage
 websocket.onmessage = function (evt) {
-    push(evt.data);
+    // push(evt.data);
     console.log("ws-server-return-date:" + evt.data);
 };
 
