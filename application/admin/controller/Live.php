@@ -9,12 +9,16 @@
 namespace app\admin\controller;
 
 
+use app\common\lib\redis\Predis;
+
 class Live
 {
     public function push()
     {
-        print_r($_GET);
-
-        $_POST['http_server']->push(17,'hello_world!!!');
+//        print_r($_GET);
+        $client = Predis::getInstance()->sMember(config('redis.live_game_key'));
+        foreach ($client as $fd) {
+            $_POST['http_server']->push($fd,'hello');
+        }
     }
 }

@@ -6,6 +6,12 @@
  * Time: 7:05
  */
 
+namespace server;
+
+use app\common\lib\redis\Predis;
+use app\common\lib\task\Task;
+use think\Container;
+
 class Ws
 {
     const HOST = '0.0.0.0';
@@ -15,7 +21,7 @@ class Ws
 
     public function __construct()
     {
-        $this->ws = new swoole_websocket_server(self::HOST, self::PORT);
+        $this->ws = new \swoole_websocket_server(self::HOST, self::PORT);
         $this->ws->on('workerStart', [$this, 'onWorkerStart']);
         $this->ws->on('request', [$this, 'onRequest']);
         $this->ws->on('open', [$this, 'onOpen']);
@@ -41,14 +47,14 @@ class Ws
      */
     public function onOpen($ws, $request)
     {
-        \app\common\lib\redis\Predis::getInstance()
+        Predis::getInstance()
             ->sAdd(config('redis.live_game_key'), $request->fd);
         var_dump($request->fd);
     }
 
     public function onClose($ws, $fd)
     {
-        \app\common\lib\redis\Predis::getInstance()
+        Predis::getInstance()
             ->sRem(config('redis.live_game_key'), $fd);
         echo "clientid:$fd\n";
     }
@@ -69,11 +75,15 @@ class Ws
 //        define('APP_PATH', __DIR__ . '/../application/');
         // 加载基础文件
 //        require __DIR__ . '/../thinkphp/base.php';
+
+
         //如果Task要使用TP的助手函数就必须在workerStart引入index.php文件，
         //因为助手函数是在App.php类中被初始化的，
         //Task机制是worker异步调用函数，必须在worker启动的时候调用App->init()引入helper.php文件
         require __DIR__ . '/../public/index.php';
-
+        //自动载入方法是在tp框架中定义的，如果放在__construct
+        //则需要手动require类文件
+        $this->_cleanClient();
     }
 
     public function onRequest($request, $response)
@@ -110,7 +120,7 @@ class Ws
         $_POST['http_server'] = $this->ws;
         ob_start();
         try {
-            \think\Container::get('app')->run()->send();
+            Container::get('app')->run()->send();
             $ret = ob_get_contents();
             ob_end_clean();
         } catch (\Exception $e) {
@@ -121,7 +131,7 @@ class Ws
 
     public function onTask($serv, $taskId, $workerId, $data)
     {
-        $obj = new \app\common\lib\task\Task();
+        $obj = new Task();
         $method = $data['method'];
         $flag = $obj->$method($data['data']);
 //        try {
@@ -139,6 +149,16 @@ class Ws
         echo "finish-data-success " . $data;
     }
 
+    private function _cleanClient()
+    {
+        $client = Predis::getInstance()
+            ->sMember(config('redis.live_game_key'));
+        print_r($client);
+        foreach ($client as $fd) {
+            Predis::getInstance()
+                ->sRem(config('redis.live_game_key'), $fd);
+        }
+    }
 }
 
 new Ws();
