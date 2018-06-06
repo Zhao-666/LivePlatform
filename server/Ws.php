@@ -133,7 +133,7 @@ class Ws
     {
         $obj = new Task();
         $method = $data['method'];
-        $flag = $obj->$method($data['data']);
+        $flag = $obj->$method($data['data'], $serv);
 //        try {
 //            $ret = \app\common\lib\ali\Sms::sendSms($data['phone'], $data['code']);
 //        } catch (Exception $e) {

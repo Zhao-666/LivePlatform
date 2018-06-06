@@ -16,12 +16,25 @@ use think\Exception;
 
 class Task
 {
+
+    /**
+     * 发送赛况数据
+     * @param $data
+     */
+    public function pushLive($data, $serv)
+    {
+        $client = Predis::getInstance()->sMember(config('redis.live_game_key'));
+        foreach ($client as $fd) {
+            $serv->push($fd, json_encode($data));
+        }
+    }
+
     /**
      * 异步发送验证码
      * @param $data
      * @return bool|string
      */
-    public function sendSms($data)
+    public function sendSms($data, $serv)
     {
         try {
             $ret = Sms::sendSms($data['phone'], $data['code']);

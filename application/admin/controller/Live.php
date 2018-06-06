@@ -9,7 +9,6 @@
 namespace app\admin\controller;
 
 
-use app\common\lib\redis\Predis;
 use app\common\lib\Util;
 
 class Live
@@ -26,9 +25,13 @@ class Live
             'image' => !empty($_GET['image']) ? $_GET['image'] : ''
         ];
 //        print_r($_GET);
-        $client = Predis::getInstance()->sMember(config('redis.live_game_key'));
-        foreach ($client as $fd) {
-            $_POST['http_server']->push($fd, json_encode($data));
-        }
+        $taskData = [
+            'method' => 'pushLive',
+            'data' => $data
+        ];
+        $_POST['http_server']->task($taskData);
+        return Util::show(config('code.success'), 'success');
+
+
     }
 }
