@@ -64,6 +64,6 @@ class Predis
 
     public function __call($name, $arguments)
     {
-        $this->redis->name($arguments[0], $arguments[1]);
+        $this->redis->$name($arguments[0], $arguments[1]);
     }
 }
