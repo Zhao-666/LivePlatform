@@ -16,12 +16,14 @@ class Ws
 {
     const HOST = '0.0.0.0';
     const PORT = 8811;
+    const CHART_PORT = 8812;
 
     public $ws = null;
 
     public function __construct()
     {
         $this->ws = new \swoole_websocket_server(self::HOST, self::PORT);
+        $this->ws->listen(self::HOST, self::CHART_PORT, SWOOLE_SOCK_TCP);
         $this->ws->on('workerStart', [$this, 'onWorkerStart']);
         $this->ws->on('request', [$this, 'onRequest']);
         $this->ws->on('open', [$this, 'onOpen']);
@@ -47,6 +49,7 @@ class Ws
      */
     public function onOpen($ws, $request)
     {
+        print_r($ws);
         Predis::getInstance()
             ->sAdd(config('redis.live_game_key'), $request->fd);
         var_dump($request->fd);

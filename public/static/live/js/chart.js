@@ -1,4 +1,4 @@
-var wsUrl = "ws://127.0.0.1:8812";
+var wsUrl = "ws://172.20.10.4:8812";
 var websocket = new WebSocket(wsUrl);
 
 //实例对象的 onopen 属性

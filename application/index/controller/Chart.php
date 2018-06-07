@@ -6,13 +6,13 @@
  * Time: 8:00
  */
 
-namespace app\admin\controller;
+namespace app\index\controller;
 
 
 class Chart
 {
     public function index()
     {
-        
+
     }
 }
