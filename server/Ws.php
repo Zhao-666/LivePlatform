@@ -49,7 +49,6 @@ class Ws
      */
     public function onOpen($ws, $request)
     {
-        print_r($ws);
         Predis::getInstance()
             ->sAdd(config('redis.live_game_key'), $request->fd);
         var_dump($request->fd);
