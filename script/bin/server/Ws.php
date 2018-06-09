@@ -6,7 +6,7 @@
  * Time: 7:05
  */
 
-namespace server;
+namespace script\bin\server;
 
 use app\common\lib\redis\Predis;
 use app\common\lib\task\Task;
@@ -82,7 +82,7 @@ class Ws
         //如果Task要使用TP的助手函数就必须在workerStart引入index.php文件，
         //因为助手函数是在App.php类中被初始化的，
         //Task机制是worker异步调用函数，必须在worker启动的时候调用App->init()引入helper.php文件
-        require __DIR__ . '/../public/index.php';
+        require __DIR__ . '/../../../public/index.php';
         //自动载入方法是在tp框架中定义的，如果放在__construct
         //则需要手动require类文件
         $this->_cleanClient();
