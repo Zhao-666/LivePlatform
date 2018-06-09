@@ -74,7 +74,7 @@ class Ws
 
     public function onWorkerStart($ws, $worker_id)
     {
-//        define('APP_PATH', __DIR__ . '/../application/');
+        define('APP_PATH', __DIR__ . '/../../../application/');
         // 加载基础文件
 //        require __DIR__ . '/../thinkphp/base.php';
 
@@ -119,6 +119,7 @@ class Ws
                 $_FILES[$key] = $value;
             }
         }
+        $this->writeLog();
         $_POST['http_server'] = $this->ws;
         ob_start();
         try {
@@ -160,6 +161,21 @@ class Ws
             Predis::getInstance()
                 ->sRem(config('redis.live_game_key'), $fd);
         }
+    }
+
+    public function writeLog()
+    {
+        $datas = array_merge(['date' => date('Y-m-d')], $_GET, $_POST);
+
+        $log = '';
+        foreach ($datas as $key => $data) {
+            $log .= $key . ':' . $data . ' ';
+        }
+        swoole_async_writefile(APP_PATH . '../runtime/log/'
+            . date('Ym') . '/'
+            . date('d') . '_access.log', $log . PHP_EOL, function ($filename) {
+
+        }, FILE_APPEND);
     }
 }
 
