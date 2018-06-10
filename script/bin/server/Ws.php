@@ -24,6 +24,7 @@ class Ws
     {
         $this->ws = new \swoole_websocket_server(self::HOST, self::PORT);
         $this->ws->listen(self::HOST, self::CHART_PORT, SWOOLE_SOCK_TCP);
+        $this->ws->on('start', [$this, 'onStart']);
         $this->ws->on('workerStart', [$this, 'onWorkerStart']);
         $this->ws->on('request', [$this, 'onRequest']);
         $this->ws->on('open', [$this, 'onOpen']);
@@ -42,6 +43,11 @@ class Ws
         $this->ws->start();
     }
 
+    public function onStart($ws)
+    {
+        swoole_set_process_name('live_master');
+    }
+
     /**
      * 监听ws连接事件
      * @param $ws
@@ -51,7 +57,6 @@ class Ws
     {
         Predis::getInstance()
             ->sAdd(config('redis.live_game_key'), $request->fd);
-        var_dump($request->fd);
     }
 
     public function onClose($ws, $fd)
@@ -156,7 +161,7 @@ class Ws
     {
         $client = Predis::getInstance()
             ->sMember(config('redis.live_game_key'));
-        print_r($client);
+//        print_r($client);
         foreach ($client as $fd) {
             Predis::getInstance()
                 ->sRem(config('redis.live_game_key'), $fd);
